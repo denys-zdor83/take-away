@@ -32,9 +32,9 @@
 	// Тип анимации курсора
   "editor.cursorBlinking": "phase",
 	// Плавная анимация
-  "editor.cursorSmoothCaretAnimation": true,
+  "editor.cursorSmoothCaretAnimation": "on",
   "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": true
+    "source.fixAll.eslint": "explicit"
   },
 
   "workbench.colorTheme": "Mokka",
