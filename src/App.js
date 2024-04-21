@@ -1,9 +1,11 @@
-import './scss/app.scss'
+import './scss/app.scss';
 
-import Header from './components/Header'
-import Categories from './components/Categories'
-import Sort from './components/Sort'
-import PizzaBlock from './components/PizzaBlock'
+import Header from './components/Header';
+import Categories from './components/Categories';
+import Sort from './components/Sort';
+import PizzaBlock from './components/PizzaBlock';
+
+import pizzas from './assets/menu.data/pizzas';
 
 function App() {
   return (
@@ -15,10 +17,11 @@ function App() {
             <Categories />
             <Sort />
           </div>
-          <h2 className="content__title">Все пиццы</h2>
+          <h2 className="content__title">All pizzas</h2>
           <div className="content__items">
-            <PizzaBlock title="Margherita" price={20} />
-            <PizzaBlock title="Peperoni" price={15} />
+            {pizzas.map((pizza) => (
+              <PizzaBlock {...pizza} key={pizza.id} />
+            ))}
           </div>
         </div>
       </div>
