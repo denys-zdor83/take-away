@@ -1,13 +1,20 @@
-import './scss/app.scss';
+import { useState, useEffect } from 'react';
 
 import Header from './components/Header';
 import Categories from './components/Categories';
 import Sort from './components/Sort';
 import PizzaBlock from './components/PizzaBlock';
 
-import pizzas from './assets/menu.data/pizzas';
-
+import './scss/app.scss';
 function App() {
+  const [pizzas, setPizzas] = useState([]);
+
+  useEffect(() => {
+    fetch('https://c988e3cd7ecb047d.mokky.dev/pizzas')
+      .then((response) => response.json())
+      .then((json) => setPizzas(json));
+  }, []);
+
   return (
     <div className="wrapper">
       <Header />
