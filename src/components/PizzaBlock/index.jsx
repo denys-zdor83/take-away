@@ -8,7 +8,7 @@ function PizzaBlock({ title, price, imageUrl: image, sizes, types }) {
 
   return (
     <div className="pizza-block">
-      <img className="pizza-block__image" 
+      <img className="pizza-block__image"   
         src={image} 
         alt="Pizza" 
       />
