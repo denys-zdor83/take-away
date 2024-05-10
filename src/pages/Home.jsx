@@ -5,7 +5,7 @@ import Sort from '../components/Sort';
 import PizzaBlock from '../components/PizzaBlock';
 import Skeleton from '../components/PizzaBlock/Skeleton';
 
-function Home() {
+function Home({ searchValue }) {
   const [pizzas, setPizzas] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [categoryId, setCategoryId] = useState(0);
@@ -14,17 +14,23 @@ function Home() {
     sortProperty: '-rating',
   });
 
+  const skeletons = [...new Array(6)].map((_, idx) => <Skeleton key={idx} />);
+  const pizzaItems = pizzas.map((pizza) => <PizzaBlock {...pizza} key={pizza.id} />)
+
   useEffect(() => {
     const category = categoryId > 0 ? `category=${categoryId}` : ''
+    const search = searchValue ? `&title=*${searchValue}` : ''
+    const fetchUrl = `https://c988e3cd7ecb047d.mokky.dev/pizzas?${ category }&sortBy=${ sortType.sortProperty }${ search }`
+
     setIsLoading(true);
-    fetch(`https://c988e3cd7ecb047d.mokky.dev/pizzas?${ category }&sortBy=${ sortType.sortProperty }`)
+    fetch(fetchUrl)
       .then((response) => response.json())
       .then((json) => {
         setPizzas(json);
         setIsLoading(false);
       });
     window.scrollTo(0, 0);
-  }, [categoryId, sortType]);
+  }, [categoryId, sortType, searchValue]);
 
   return (
     <div className="container">
@@ -40,9 +46,7 @@ function Home() {
       </div>
       <h2 className="content__title">All pizzas</h2>
       <div className="content__items">
-        {isLoading
-          ? [...new Array(6)].map((_, idx) => <Skeleton key={idx} />)
-          : pizzas.map((pizza) => <PizzaBlock {...pizza} key={pizza.id} />)}
+        {isLoading ? skeletons : pizzaItems}
       </div>
     </div>
   );
