@@ -1,11 +1,15 @@
-import React from 'react';
+import { useContext } from 'react';
+
+import { SearchContext } from '../../App';
 
 import styles from './Search.module.scss';
 
 import Lens from '../../assets/img/lens.svg';
 import Close from '../../assets/img/cross.svg';
 
-function Search({ searchValue, setSearchValue }) {
+function Search() {
+  const { searchValue, setSearchValue } = useContext(SearchContext);
+
   return (
     <div className={styles.root}>
       <img className={styles.lens} src={Lens} alt="lens" />
