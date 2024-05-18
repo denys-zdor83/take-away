@@ -1,4 +1,5 @@
-import { useContext } from 'react';
+import { useContext, useRef, useCallback, useState } from 'react';
+import debounce from 'lodash.debounce'; 
 
 import { SearchContext } from '../../App';
 
@@ -8,22 +9,43 @@ import Lens from '../../assets/img/lens.svg';
 import Close from '../../assets/img/cross.svg';
 
 function Search() {
-  const { searchValue, setSearchValue } = useContext(SearchContext);
+  const [ value, setValue ] = useState('');
+  const { setSearchValue } = useContext(SearchContext);
+  const inputRef = useRef()
+
+  const onClickClear = () => {
+    setSearchValue('');
+    setValue('');
+    inputRef.current.focus();
+  };
+
+  const updateSearchValue = useCallback(
+    debounce((str) => {
+      setSearchValue(str);
+    }, 500),
+    [],
+  );
+
+  const onChangeInput = (event) => {
+    setValue(event.target.value);
+    updateSearchValue(event.target.value);
+  };
 
   return (
     <div className={styles.root}>
       <img className={styles.lens} src={Lens} alt="lens" />
-      {searchValue && (
+      {value && (
         <img
-          onClick={() => setSearchValue('')}
+          onClick={onClickClear}
           className={styles.close}
           src={Close}
           alt="close"
         />
       )}
       <input
-        value={searchValue}
-        onChange={(event) => setSearchValue(event.target.value)}
+        ref={inputRef}
+        value={value}
+        onChange={onChangeInput}
         className={styles.input}
         placeholder="Search..."
       />
