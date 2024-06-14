@@ -24,12 +24,8 @@ function Sort() {
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      console.log(event);
-      console.log(event.composedPath());
-      console.log(sortRef);
-
       if (!event.composedPath().includes(sortRef.current)) {
-        console.log('click outside');
+        setIsOpen(false);
       }
     }
     document.body.addEventListener('click', handleClickOutside);
