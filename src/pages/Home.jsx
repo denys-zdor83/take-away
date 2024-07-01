@@ -1,52 +1,46 @@
-import { useState, useEffect, useContext, useRef } from 'react';
+import { useEffect, useContext, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import qs from 'qs';
 
 import Categories from '../components/Categories';
 import Sort, { sortList } from '../components/Sort';
-import PizzaBlock from '../components/PizzaBlock';
+import PizzaBlock from '../components/PizzaBlock/index.jsx';
 import Skeleton from '../components/PizzaBlock/Skeleton';
 import Pagination from '../components/Pagination';
 import { SearchContext } from '../App';
-import { setCategoryId, setCurrentPage, setFilters } from '../redux/slices/filterSlice';
+import { selectFilter, setCategoryId, setCurrentPage, setFilters } from '../redux/slices/filterSlice';
+import { fetchPizzas, selectPizzasData } from '../redux/slices/pizzasSlice';
 
 function Home() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const { categoryId, sort, currentPage } = useSelector((state) => state.filter);
-  const { searchValue } = useContext(SearchContext);
+  const { items, status, totalPages } = useSelector(selectPizzasData);
+  const { categoryId, sort, currentPage, searchValue } = useSelector(selectFilter);
   const isSearch = useRef(false);
   const isMounted = useRef(false);
-  const [ pizzas, setPizzas ] = useState([]);
-  const [ isLoading, setIsLoading ] = useState(true);
-  // const [currentPage, setCurrentPage] = useState(0);
-  const [ totalPages, setTotalPages ] = useState(0);
 
   const skeletons = [...new Array(6)].map((_, idx) => <Skeleton key={idx} />);
-  const pizzaItems = pizzas.map((pizza) => <PizzaBlock {...pizza} key={pizza.id} />)
+  const pizzaItems = items.map((pizza) => <PizzaBlock {...pizza} key={pizza.id} />)
 
   const onChangePage = (number) => {
     dispatch(setCurrentPage(number));
   }
 
-  function fetchPizzas() {
-    setIsLoading(true);
+  async function getPizzas() {
     const category = categoryId > 0 ? `&category=${categoryId}` : ''
     const search = searchValue ? `&title=*${searchValue}` : ''
-    const fetchUrl = `https://c988e3cd7ecb047d.mokky.dev/pizzas?page=${currentPage}&limit=4${ category }&sortBy=${ sort.sortProperty }${ search }`
 
-    axios.get(fetchUrl)
-      .then((response) => {
-        setPizzas(response.data.items);
-        setTotalPages(response.data.meta.total_pages);
-        setIsLoading(false);
+    dispatch(
+      fetchPizzas({
+        currentPage,
+        category,
+        search,
+        sort
       })
-      .catch((error) => {
-        console.log(error);
-      });
+    );
+    window.scrollTo(0, 0);
   }
 
   // Pass parameters to url, only if it wasn't first render
@@ -80,12 +74,7 @@ function Home() {
   
   // Fetch data from backend. Checking on the first render, if we have params, don't fetch
   useEffect(() => {
-    window.scrollTo(0, 0);
-    if (!isSearch.current) {
-      fetchPizzas();
-    }
-
-    isSearch.current = false;
+      getPizzas();
   }, [categoryId, sort.sortProperty, searchValue, currentPage]);
 
   return (
@@ -98,9 +87,17 @@ function Home() {
         <Sort />
       </div>
       <h2 className="content__title">All pizzas</h2>
-      <div className="content__items">
-        {isLoading ? skeletons : pizzaItems}
-      </div>
+      {status === 'error' ? (
+        <div className="content__error-info">
+          <h2>Something went wrong 😕</h2>
+          <p>Can't load pizzas. Please, try again later.</p>
+        </div>
+      )
+      : (      
+        <div className="content__items">
+          {status === 'loading' ? skeletons : pizzaItems}
+        </div>
+      )}
       <Pagination currentPage={currentPage} totalPages={totalPages} setCurrentPage={onChangePage} />
     </div>
   );
