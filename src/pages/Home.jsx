@@ -1,6 +1,6 @@
 import { useEffect, useContext, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import qs from 'qs';
 
 import Categories from '../components/Categories';
@@ -22,7 +22,11 @@ function Home() {
   const isMounted = useRef(false);
 
   const skeletons = [...new Array(6)].map((_, idx) => <Skeleton key={idx} />);
-  const pizzaItems = items.map((pizza) => <PizzaBlock {...pizza} key={pizza.id} />)
+  const pizzaItems = items.map((pizza) => (
+    <Link to={`/pizza/${pizza.id}`} key={pizza.id} >
+      <PizzaBlock {...pizza} />
+    </Link>
+  ))
 
   const onChangePage = (number) => {
     dispatch(setCurrentPage(number));
