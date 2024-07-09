@@ -1,14 +1,18 @@
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-const FullPizza = () => {
+const FullPizza: React.FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [pizza, setPizza] = useState();
+  const [pizza, setPizza] = React.useState<{
+    imageUrl: string;
+    title: string;
+    price: number
+  }>();
   const { title, imageUrl, price } = pizza || {};
 
-  useEffect(() => {
+  React.useEffect(() => {
     async function fetchPizza() {
       try {
         const { data } = await axios.get(`https://c988e3cd7ecb047d.mokky.dev/pizzas/${id}`)
@@ -21,6 +25,10 @@ const FullPizza = () => {
 
     fetchPizza();
   }, []);
+
+  if (!pizza) {
+    return <>Loading...</>;
+  }
 
   return (
     <div className="container">
