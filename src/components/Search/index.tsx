@@ -1,4 +1,4 @@
-import { useRef, useCallback, useState } from 'react';
+import React from 'react';
 import debounce from 'lodash.debounce'; 
 
 import styles from './Search.module.scss';
@@ -8,25 +8,25 @@ import Close from '../../assets/img/cross.svg';
 import { useDispatch } from 'react-redux';
 import { setSearchValue } from '../../redux/slices/filterSlice';
 
-function Search() {
+const Search: React.FC = () => {
   const dispatch = useDispatch()
-  const [ value, setValue ] = useState('');
-  const inputRef = useRef()
+  const [ value, setValue ] = React.useState('');
+  const inputRef = React.useRef<HTMLInputElement>(null)
 
   const onClickClear = () => {
     dispatch(setSearchValue(''));
     setValue('');
-    inputRef.current.focus();
+    inputRef.current?.focus();
   };
 
-  const updateSearchValue = useCallback(
+  const updateSearchValue = React.useCallback(
     debounce((str) => {
       dispatch(setSearchValue(str));
     }, 500),
     [],
   );
 
-  const onChangeInput = (event) => {
+  const onChangeInput = (event: any) => {
     setValue(event.target.value);
     updateSearchValue(event.target.value);
   };
