@@ -1,35 +1,34 @@
-import { useEffect, useContext, useRef } from 'react';
+import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import qs from 'qs';
 
 import Categories from '../components/Categories';
 import Sort, { sortList } from '../components/Sort';
-import PizzaBlock from '../components/PizzaBlock/index.jsx';
+import PizzaBlock from '../components/PizzaBlock';
 import Skeleton from '../components/PizzaBlock/Skeleton';
 import Pagination from '../components/Pagination';
-import { SearchContext } from '../App';
 import { selectFilter, setCategoryId, setCurrentPage, setFilters } from '../redux/slices/filterSlice';
 import { fetchPizzas, selectPizzasData } from '../redux/slices/pizzasSlice';
 
-function Home() {
+const Home: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const { items, status, totalPages } = useSelector(selectPizzasData);
   const { categoryId, sort, currentPage, searchValue } = useSelector(selectFilter);
-  const isSearch = useRef(false);
-  const isMounted = useRef(false);
+  const isSearch = React.useRef(false);
+  const isMounted = React.useRef(false);
 
   const skeletons = [...new Array(6)].map((_, idx) => <Skeleton key={idx} />);
-  const pizzaItems = items.map((pizza) => (
+  const pizzaItems = items.map((pizza: any) => (
     <Link to={`/pizza/${pizza.id}`} key={pizza.id} >
       <PizzaBlock {...pizza} />
     </Link>
   ))
 
-  const onChangePage = (number) => {
-    dispatch(setCurrentPage(number));
+  const onChangePage = (page: number) => {
+    dispatch(setCurrentPage(page));
   }
 
   async function getPizzas() {
@@ -37,6 +36,7 @@ function Home() {
     const search = searchValue ? `&title=*${searchValue}` : ''
 
     dispatch(
+      // @ts-ignore
       fetchPizzas({
         currentPage,
         category,
@@ -48,7 +48,7 @@ function Home() {
   }
 
   // Pass parameters to url, only if it wasn't first render
-  useEffect(() => {
+  React.useEffect(() => {
     if (isMounted.current) {
       const queryString = qs.stringify({
         sortProperty: sort.sortProperty,
@@ -62,7 +62,7 @@ function Home() {
   }, [categoryId, sort.sortProperty, currentPage]);
 
   // When was first render, check url parameters and safe in redux
-  useEffect(() => {
+  React.useEffect(() => {
     if (window.location.search) {
       const params = qs.parse(window.location.search.substring(1));
       const sort = sortList.find((obj) => obj.sortProperty === params.sortProperty);
@@ -77,7 +77,7 @@ function Home() {
   }, []);
   
   // Fetch data from backend. Checking on the first render, if we have params, don't fetch
-  useEffect(() => {
+  React.useEffect(() => {
       getPizzas();
   }, [categoryId, sort.sortProperty, searchValue, currentPage]);
 
@@ -86,7 +86,7 @@ function Home() {
       <div className="content__top">
         <Categories 
           value={categoryId} 
-          onChangeCategory={(id) => dispatch(setCategoryId(id))} 
+          onChangeCategory={(id: number) => dispatch(setCategoryId(id))} 
         />
         <Sort />
       </div>
@@ -102,7 +102,11 @@ function Home() {
           {status === 'loading' ? skeletons : pizzaItems}
         </div>
       )}
-      <Pagination currentPage={currentPage} totalPages={totalPages} setCurrentPage={onChangePage} />
+      <Pagination 
+        currentPage={currentPage} 
+        totalPages={totalPages} 
+        setCurrentPage={onChangePage} 
+      />
     </div>
   );
 }
