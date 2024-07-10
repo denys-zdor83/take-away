@@ -1,10 +1,14 @@
-import { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectSort, setSort } from '../redux/slices/filterSlice';
 
 type SortItem = {
   name: string;
   sortProperty: string;
+}
+
+type PopupClickType = MouseEvent & {
+  composedPath: () => Node[]
 }
 
 export const sortList: SortItem[] = [
@@ -28,8 +32,10 @@ function Sort() {
   };
 
   useEffect(() => {
-    const handleClickOutside = (event: any) => {
-      if (!event.composedPath().includes(sortRef.current)) {
+    const handleClickOutside = (event: MouseEvent) => {
+      const _event = event as PopupClickType
+      
+      if (sortRef.current && !_event.composedPath().includes(sortRef.current)) {
         setIsOpen(false);
       }
     }
