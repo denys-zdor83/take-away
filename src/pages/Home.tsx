@@ -1,19 +1,20 @@
 import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { Link, useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { useNavigate, useParams } from 'react-router-dom';
 import qs from 'qs';
 
 import Categories from '../components/Categories';
-import Sort, { sortList } from '../components/Sort';
+import SortPopup, { sortList } from '../components/Sort';
 import PizzaBlock from '../components/PizzaBlock';
 import Skeleton from '../components/PizzaBlock/Skeleton';
 import Pagination from '../components/Pagination';
 import { selectFilter, setCategoryId, setCurrentPage, setFilters } from '../redux/slices/filterSlice';
-import { fetchPizzas, selectPizzasData } from '../redux/slices/pizzasSlice';
+import { SearchPizzaParams, fetchPizzas, selectPizzasData } from '../redux/slices/pizzasSlice';
+import { useAppDispatch } from '../redux/store';
 
 const Home: React.FC = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const { items, status, totalPages } = useSelector(selectPizzasData);
   const { categoryId, sort, currentPage, searchValue } = useSelector(selectFilter);
@@ -22,9 +23,7 @@ const Home: React.FC = () => {
 
   const skeletons = [...new Array(6)].map((_, idx) => <Skeleton key={idx} />);
   const pizzaItems = items.map((pizza: any) => (
-    <Link to={`/pizza/${pizza.id}`} key={pizza.id} >
       <PizzaBlock {...pizza} />
-    </Link>
   ))
 
   const onChangeCategory = (id: number) => dispatch(setCategoryId(id));
@@ -33,49 +32,57 @@ const Home: React.FC = () => {
 
 
   async function getPizzas() {
-    const category = categoryId > 0 ? `&category=${categoryId}` : ''
-    const search = searchValue ? `&title=*${searchValue}` : ''
+    const sortBy = sort.sortProperty;
+    const category = categoryId > 0 ? `&category=${categoryId}` : '';
+    const search = searchValue ? `&title=*${searchValue}` : '';
 
     dispatch(
-      // @ts-ignore
       fetchPizzas({
         currentPage,
         category,
         search,
-        sort
+        sortBy
       })
     );
     window.scrollTo(0, 0);
   }
 
   // Pass parameters to url, only if it wasn't first render
-  React.useEffect(() => {
-    if (isMounted.current) {
-      const queryString = qs.stringify({
-        sortProperty: sort.sortProperty,
-        categoryId,
-        currentPage,
-      })
-      navigate(`?${ queryString }`);
-    }
+  // React.useEffect(() => {
+  //   if (isMounted.current) {
+  //     const params = {
+  //       sortProperty: sort.sortProperty,
+  //       categoryId,
+  //       currentPage,
+  //     }
 
-    isMounted.current = true;
-  }, [categoryId, sort.sortProperty, currentPage]);
+  //     const queryString = qs.stringify(params, { skipNulls: true });
+  //     navigate(`?${ queryString }`);
+  //   }
+
+  //   if (!window.location.search) {
+  //     dispatch(fetchPizzas({} as SearchPizzaParams));
+  //   }
+
+  //   isMounted.current = true;
+  // }, [categoryId, sort.sortProperty, currentPage]);
 
   // When was first render, check url parameters and safe in redux
-  React.useEffect(() => {
-    if (window.location.search) {
-      const params = qs.parse(window.location.search.substring(1));
-      const sort = sortList.find((obj) => obj.sortProperty === params.sortProperty);
+  // React.useEffect(() => {
+  //   if (window.location.search) {
+  //     const params = (qs.parse(window.location.search.substring(1)) as unknown) as SearchPizzaParams;
+  //     const sort = sortList.find((obj) => obj.sortProperty === params.sortBy);
 
-      dispatch(setFilters({
-        ...params,
-        sort,
-      }));
+  //     dispatch(setFilters({
+  //       categoryId: Number(params.category),
+  //       searchValue: params.search,
+  //       currentPage: params.currentPage,
+  //       sort: sort || sortList[0],
+  //     }));
   
-      isSearch.current = true;
-    }
-  }, []);
+  //     isMounted.current = true;
+  //   }
+  // }, []);
   
   // Fetch data from backend. Checking on the first render, if we have params, don't fetch
   React.useEffect(() => {
@@ -89,7 +96,7 @@ const Home: React.FC = () => {
           value={categoryId} 
           onChangeCategory={onChangeCategory} 
         />
-        <Sort />
+        <SortPopup />
       </div>
       <h2 className="content__title">All pizzas</h2>
       {status === 'error' ? (
