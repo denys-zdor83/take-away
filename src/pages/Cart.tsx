@@ -1,14 +1,13 @@
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import CartItemBlock from '../components/CartItem';
 import CartEmpty from '../components/CartEmpty';
-import React from 'react';
-import { selectCart } from '../redux/cart/selectors';
-import { clearItems } from '../redux/cart/slice';
-
 import CartTitle from '../assets/img/cart-title.svg';
 import Bucket from '../assets/img/bucket.svg';
 import ArrowLeft from '../assets/img/arrow-left.svg';
+import { selectCart } from '../redux/cart/selectors';
+import { clearItems } from '../redux/cart/slice';
 
 const Cart: React.FC = () => {
   const dispatch = useDispatch();

@@ -1,6 +1,6 @@
-import axios from 'axios';
 import React from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import axios from 'axios';
 
 const FullPizza: React.FC = () => {
   const { id } = useParams();

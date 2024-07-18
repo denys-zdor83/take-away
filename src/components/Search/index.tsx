@@ -1,11 +1,9 @@
 import React from 'react';
+import { useDispatch } from 'react-redux';
 import debounce from 'lodash.debounce'; 
-
 import styles from './Search.module.scss';
-
 import Lens from '../../assets/img/lens.svg';
 import Close from '../../assets/img/cross.svg';
-import { useDispatch } from 'react-redux';
 import { setSearchValue } from '../../redux/filter/slice';
 
 const Search: React.FC = () => {
