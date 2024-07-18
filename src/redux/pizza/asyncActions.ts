@@ -1,6 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { Pizza, SearchPizzaParams } from "./types";
 import axios from "axios";
+import { Pizza, SearchPizzaParams } from "./types";
 
 export const fetchPizzas = createAsyncThunk<Pizza[], SearchPizzaParams>(
   'pizzas/fetchPizzasStatus',
