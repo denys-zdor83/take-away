@@ -1,6 +1,7 @@
 import React from 'react'
 import { useDispatch } from 'react-redux';
-import { CartItem, addItem, minusItem, removeItem } from '../redux/slices/cartSlice';
+import { addItem, minusItem, removeItem } from '../redux/cart/slice';
+import { CartItem } from '../redux/cart/types';
 
 type CartItemProps = {
   id: number;
@@ -40,7 +41,8 @@ type CartItemProps = {
         <p>{type}, {size}cm.</p>
       </div>
       <div className="cart__item-count">
-        <div 
+        <button
+          disabled={count === 1}
           className="button button--outline button--circle cart__item-count-minus"
           onClick={onClickMinus}
         >
@@ -59,9 +61,9 @@ type CartItemProps = {
               fill="#EB5A1E"
             ></path>
           </svg>
-        </div>
+        </button>
         <b>{count}</b>
-        <div 
+        <button 
           className="button button--outline button--circle cart__item-count-plus"
           onClick={onClickPlus}
         >
@@ -80,13 +82,13 @@ type CartItemProps = {
               fill="#EB5A1E"
             ></path>
           </svg>
-        </div>
+        </button>
       </div>
       <div className="cart__item-price">
         <b>{price * count} $</b>
       </div>
       <div className="cart__item-remove">
-        <div 
+        <div
           className="button button--outline button--circle" 
           onClick={onClickRemove}
         >
