@@ -114,16 +114,12 @@ body {
     align-items: center;
     font-size: 32px;
 
-    svg {
+    img {
       position: relative;
       top: -2px;
       width: 30px;
       height: 30px;
       margin-right: 10px;
-      path {
-        stroke: $black;
-        stroke-width: 1.9;
-      }
     }
   }
 
@@ -140,18 +136,20 @@ body {
       font-size: 18px;
     }
 
-    span,
-    svg,
-    path {
+    img {
+      opacity: 0.4;
+      transition: all $duration ease-in-out;
+    }
+
+    span {
       transition: all $duration ease-in-out;
     }
 
     &:hover {
-      svg {
-        path {
-          stroke: darken($color: #b6b6b6, $amount: 50);
-        }
+      img {
+        opacity: 1;
       }
+      
       span {
         color: darken($color: #b6b6b6, $amount: 50);
       }
@@ -328,12 +326,8 @@ body {
           }
         }
 
-        svg {
+        img {
           margin-right: 12px;
-          path {
-            fill: transparent;
-            stroke-width: 2;
-          }
         }
       }
 
