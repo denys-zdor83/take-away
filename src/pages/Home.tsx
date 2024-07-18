@@ -8,9 +8,12 @@ import SortPopup, { sortList } from '../components/Sort';
 import PizzaBlock from '../components/PizzaBlock';
 import Skeleton from '../components/PizzaBlock/Skeleton';
 import Pagination from '../components/Pagination';
-import { selectFilter, setCategoryId, setCurrentPage, setFilters } from '../redux/slices/filterSlice';
-import { SearchPizzaParams, fetchPizzas, selectPizzasData } from '../redux/slices/pizzasSlice';
+
 import { useAppDispatch } from '../redux/store';
+import { selectPizzasData } from '../redux/pizza/selectors';
+import { selectFilter } from '../redux/filter/selectors';
+import { setCategoryId, setCurrentPage } from '../redux/filter/slice';
+import { fetchPizzas } from '../redux/pizza/asyncActions';
 
 const Home: React.FC = () => {
   const navigate = useNavigate();
@@ -23,10 +26,13 @@ const Home: React.FC = () => {
 
   const skeletons = [...new Array(6)].map((_, idx) => <Skeleton key={idx} />);
   const pizzaItems = items.map((pizza: any) => (
-      <PizzaBlock {...pizza} />
+      <PizzaBlock key={pizza.id} {...pizza} />
   ))
-
-  const onChangeCategory = (id: number) => dispatch(setCategoryId(id));
+  
+  const onChangeCategory = React.useCallback(
+    (id: number) => dispatch(setCategoryId(id)), 
+    []
+  );
 
   const onChangePage = (page: number) => dispatch(setCurrentPage(page));
 
@@ -96,7 +102,7 @@ const Home: React.FC = () => {
           value={categoryId} 
           onChangeCategory={onChangeCategory} 
         />
-        <SortPopup />
+        <SortPopup value={sort} />
       </div>
       <h2 className="content__title">All pizzas</h2>
       {status === 'error' ? (
