@@ -12,7 +12,7 @@ export const fetchPizzas = createAsyncThunk<Pizza[], SearchPizzaParams>(
       sortBy
     } = params;
 
-    const fetchUrl = `https://c988e3cd7ecb047d.mokky.dev/pizzas?page=${currentPage}&limit=4${category}&sortBy=${sortBy}${search}`
+    const fetchUrl = `https://988e3cd7ecb047d.mokky.dev/pizzas?page=${currentPage}&limit=4${category}&sortBy=${sortBy}${search}`
     const { data } = await axios.get<Pizza[]>(fetchUrl);
     
     return data;
