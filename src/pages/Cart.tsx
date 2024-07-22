@@ -1,8 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import CartItemBlock from '../components/CartItem';
-import CartEmpty from '../components/CartEmpty';
+import { CartItemBlock, CartEmpty } from '../components';
 import CartTitle from '../assets/img/cart-title.svg';
 import Bucket from '../assets/img/bucket.svg';
 import ArrowLeft from '../assets/img/arrow-left.svg';
