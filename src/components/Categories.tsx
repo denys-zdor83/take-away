@@ -8,7 +8,7 @@ type CategoriesProps = {
 
 const categories = ['All', 'Meat', 'Vegetarian', 'Grill', 'Spicy', 'Closed']
 
-const Categories: React.FC<CategoriesProps> = React.memo(
+export const Categories: React.FC<CategoriesProps> = React.memo(
   ({ value, onChangeCategory }) => {
     // TODO delete after debuging
     useWhyDidYouUpdate('Categories', { value, onChangeCategory })
@@ -32,5 +32,3 @@ const Categories: React.FC<CategoriesProps> = React.memo(
     )
   }
 )
-
-export default Categories
